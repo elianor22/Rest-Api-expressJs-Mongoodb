@@ -96,33 +96,54 @@ exports.updateItems = async(req, res,next) =>{
      } = req.body;
 
     const id = req.params.id;
-    const items = await Items.findById(id)
+    const item = await Items.findById(id)
     const categories = await Category.findById(categoryId);
 
-    console.log(items._id)
+    const images = req.files
+    const image =[]
+    images.forEach((value) => {
+      image.push(value.path);
+    });
+
+    console.log(item._id)
     console.log(req.files)
     if(req.files.length > 0){
+        item.name = name;
+        item.categoryId = categoryId;
+        item.category = category;
+        item.description = description;
+        item.rating = rating;
+        item.price = price;
+        item.photo = image
 
+        await item.save();
+        console.log(item);
+        // save itemsId to category
+        categories.itemsId.addToSet({ _id: item._id });
+        categories.save(); //save category
+        res.status(200).json({
+          message: "create Items",
+          data: item,
+        });
+            
     }else{
-      let item = new Items({
-        name,
-        categories: {
-          categoryId,
-          category,
-        },
-        description,
-        rating,
-        price,
-      });
-      // let saveItem = await item.save();
+     
+        item.name = name;
+        item.categoryId = categoryId;
+        item.category = category;
+        item.description = description;
+        item.rating = rating;
+        item.price = price;
+      
+      await item.save();
       console.log(item)
       // save itemsId to category
-      // categories.itemsId.push({ _id: item._id });
-      // categories.save(); //save category
-      // res.status(200).json({
-      //   message: "create Items",
-      //   data: saveItem,
-      // });
+      categories.itemsId.addToSet({ _id: item._id });
+      categories.save(); //save category
+      res.status(200).json({
+        message: "create Items",
+        data: item,
+      });
     }
   } catch (error) {
     console.log("error", error);
