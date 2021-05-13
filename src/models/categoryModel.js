@@ -9,13 +9,21 @@ const category = new Schema({
     // photo:{
     //     type:String
     // }
-    itemsId :[{
+    products:[{
         type: Schema.Types.ObjectId,
-        ref:"items"
+        ref:"product"
     }]
 
 },{
     timestamps: true
 })
 
+
+category.virtual("id").get(function () {
+  return this._id.toHexString();
+});
+
+category.set("toJSON", {
+  virtuals: true,
+});
 module.exports = mongoose.model('category',category)

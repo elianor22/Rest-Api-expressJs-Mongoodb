@@ -1,4 +1,6 @@
+const { compareSync } = require("bcrypt");
 const { check,body, validationResult } = require("express-validator");
+const Users = require("../../models/userModel")
 
 exports.Validation = (req,res,next) =>{
   const errors = validationResult(req)
@@ -22,3 +24,21 @@ exports.checkItemValidation = [
   // check("description").notEmpty().isLength({min:10})
   // check("photo").notEmpty(),
 ];
+
+exports.checkUser = [
+  check("email")
+    .custom((value) => {
+      const { email } = value;
+       Users.findOne(email).then((doc)=>{
+         console.log(doc)
+       })
+      
+      // console.log(Users);
+    }),
+  check("password").notEmpty().isLength({ min: 6 }),
+];
+
+exports.checkUserLogin=[
+  check("email").notEmpty().isEmail().normalizeEmail().withMessage("please input valid email"),
+  check("password").notEmpty()
+]

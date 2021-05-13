@@ -41,12 +41,12 @@ exports.getCategoryById = async (req, res) => {
 
     console.log(id)
     let category = Category
-    let ret = await category.findById(id).then((result)=>{
+    let ret = await  category.findById(id).populate("product")
         res.status(200).json({
-            message:`get id ${id}`,
-            data: result
-        })
-    })
+          message: `get id ${id}`,
+          data: ret,
+        });
+   
 
  } catch (error) {
      console.log(error)
@@ -58,7 +58,7 @@ exports.searchCategory = async (req, res) => {
         let name = req.params.name
         let category = Category
 
-        let rel = await category.find({name:{$regex:name, $options:'i'}})
+        let rel = await category.find({name:{$regex:name, $options:'i'}}).populate("products")
        .then(doc=>{
            res.status(200).json({
                data:doc
@@ -112,7 +112,7 @@ exports.deleteCategory = async(req,res) => {
       console.log(result)
      })
  } catch (error) {
-     
+     console.log(error)
  }
 };
 

@@ -26,11 +26,11 @@ const fileFilter = (req, file, cb) => {
 const uploadSingle = multer({
   storage: fileStorage,
   fileFilter: fileFilter,
-}).single("photo");
+}).single("image");
 
 const uploadMultiple = multer({
   storage: fileStorage,
   fileFilter: fileFilter,
-}).array("photo",5);
+}).array("images", 5);
 
 module.exports = { uploadSingle, uploadMultiple };
