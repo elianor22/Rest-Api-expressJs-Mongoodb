@@ -10,10 +10,12 @@ exports.createProduct = async (req, res) => {
   try {
     const { name, category, description, rating, price,isFeatured } = req.body;
 
+     console.log(req.get("host"));
+     const basePath = `${req.protocol}://${req.get("host")}`;
+
     if(!category){
       return res.status(400).send("invalid category")
     }
-    console.log(req.files)
     // check images
     if (!req.files) {
       return res.status(400).json({
@@ -23,11 +25,15 @@ exports.createProduct = async (req, res) => {
     const image = req.files;
 
     let images = [];
-
+    console.log(basePath)
+    
     image.forEach((v) => {
-      images.push(v.path);
-    });
-
+      images.push(`${basePath}/public/images/${v.filename}`)
+      console.log(v)
+    }
+    );
+    
+    console.log(images)
     // get collection category
     const categories = await Category.findById(category);
 
@@ -102,9 +108,12 @@ exports.getProductById = async (req, res) => {
 exports.getProductCount = async (req, res) => {
   try {
     const productCount = await Product.countDocuments((count)=>count)
+   
+
+    console.log(basePath);
 
     if(!productCount){
-      res.status(400).send("no one product")
+     return res.status(400).send("no one product")
     }
     res.status(200).json({
       productCount :productCount

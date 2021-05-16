@@ -25,7 +25,7 @@ exports.getAllCategory = async (req, res) => {
 
     const getCategory =  Category;
 
-   let ret = await getCategory.find().then((doc) => {
+   let get = await getCategory.find().then((doc) => {
       res.status(200).json({
         message: "Get All Data Categories",
         data: doc,

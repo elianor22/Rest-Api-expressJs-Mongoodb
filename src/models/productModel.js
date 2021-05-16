@@ -12,10 +12,10 @@ const product = new Schema(
       ref: "category",
       required: true,
     },
-    images: {
-      type: Array,
+    images: [{
+      type: String,
       default:''
-    },
+    }],
     description: {
       type: String,
       min: 10,
