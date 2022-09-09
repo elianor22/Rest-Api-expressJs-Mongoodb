@@ -1,5 +1,5 @@
-const Product = require("../models/productModel");
-const Category = require("../models/categoryModel");
+const Product = require("../../models/productModel");
+const Category = require("../../models/categoryModel");
 const { validationResult } = require("express-validator");
 
 const path = require("path");
@@ -8,13 +8,13 @@ const { json } = require("express");
 
 exports.createProduct = async (req, res) => {
   try {
-    const { name, category, description, rating, price,isFeatured } = req.body;
+    const { name, category, description, rating, price, isFeatured } = req.body;
 
-     console.log(req.get("host"));
-     const basePath = `${req.protocol}://${req.get("host")}`;
+    console.log(req.get("host"));
+    const basePath = `${req.protocol}://${req.get("host")}`;
 
-    if(!category){
-      return res.status(400).send("invalid category")
+    if (!category) {
+      return res.status(400).send("invalid category");
     }
     // check images
     if (!req.files) {
@@ -25,15 +25,14 @@ exports.createProduct = async (req, res) => {
     const image = req.files;
 
     let images = [];
-    console.log(basePath)
-    
+    console.log(basePath);
+
     image.forEach((v) => {
-      images.push(`${basePath}/public/images/${v.filename}`)
-      console.log(v)
-    }
-    );
-    
-    console.log(images)
+      images.push(`${basePath}/public/images/${v.filename}`);
+      console.log(v);
+    });
+
+    console.log(images);
     // get collection category
     const categories = await Category.findById(category);
 
@@ -63,20 +62,24 @@ exports.createProduct = async (req, res) => {
   }
 };
 
-exports.getAllProductSpesific = async(req, res) =>{
-  const product = await Product.find().select('name category price images isFeatured ')
-  if(!product){
-    res.status(400).send("error")
-
+exports.getAllProductSpesific = async (req, res) => {
+  const product = await Product.find().select(
+    "name category price images isFeatured "
+  );
+ 
+  if (!product) {
+    res.status(400).send("error");
   }
-  res.status(200).json(product)
-}
+  res.status(200).json(product);
+};
 
 exports.getAllProducts = async (req, res) => {
   try {
     const product = Product;
 
-    let rel = await product.find().populate({path:"category", select:"name"})
+    let rel = await product
+      .find()
+      .populate({ path: "category", select: "name" });
 
     res.status(200).json({
       message: "get All items",
@@ -89,7 +92,7 @@ exports.getAllProducts = async (req, res) => {
 
 exports.getProductById = async (req, res) => {
   try {
-    const id = req.params.id
+    const id = req.params.id;
     const product = Product;
 
     let rel = await product
@@ -107,18 +110,16 @@ exports.getProductById = async (req, res) => {
 
 exports.getProductCount = async (req, res) => {
   try {
-    const productCount = await Product.countDocuments((count)=>count)
-   
+    const productCount = await Product.countDocuments((count) => count);
 
     console.log(basePath);
 
-    if(!productCount){
-     return res.status(400).send("no one product")
+    if (!productCount) {
+      return res.status(400).send("no one product");
     }
     res.status(200).json({
-      productCount :productCount
-    })
-    
+      productCount: productCount,
+    });
   } catch (error) {
     console.log(error);
   }
@@ -126,8 +127,8 @@ exports.getProductCount = async (req, res) => {
 
 exports.getProductFeatured = async (req, res) => {
   try {
-    const limits = req.params.count ? req.params.count : 0
-    const products = await Product.find({isFeatured: true}).limit(+limits)
+    const limits = req.params.count ? req.params.count : 0;
+    const products = await Product.find({ isFeatured: true }).limit(+limits);
 
     if (!products) {
       res.status(400).send("no one product");
@@ -140,7 +141,6 @@ exports.getProductFeatured = async (req, res) => {
   }
 };
 
-
 exports.getProductsByName = async (req, res) => {
   try {
     const name = req.params.name;
@@ -149,7 +149,7 @@ exports.getProductsByName = async (req, res) => {
     let search = await product
       .find({ name: { $regex: name, $options: "i" } })
       .populate({ path: "category", select: "name" });
-    
+
     res.status(200).json({
       message: `get product ${name}`,
       data: search,
@@ -159,62 +159,57 @@ exports.getProductsByName = async (req, res) => {
   }
 };
 
-exports.filterProductsByCategories = async(req,res) =>{
+exports.filterProductsByCategories = async (req, res) => {
   try {
+    let fitler = {};
+    if (req.query.categories) {
+      filter = { categories: req.query.categories.split(",") };
+    }
+    const item = await Items.find(fitler).populate("categories");
+    res.status(200).json({ item });
+  } catch (error) {}
+};
 
-  let fitler = {};
-  if (req.query.categories) {
-    filter = { categories: req.query.categories.split(",") };
-  }
-  const item = await Items.find(fitler).populate("categories");
-  res.status(200).json({ item });
-  } catch (error) {
-    
-  }
-}
-
-exports.updateProduct = async(req, res,next) =>{
+exports.updateProduct = async (req, res, next) => {
   try {
-      const { name, category, description, rating, price,isFeatured } = req.body;
+    const { name, category, description, rating, price, isFeatured } = req.body;
 
     const id = req.params.id;
     const product = await Product.findById(id);
     const categories = await Category.findById(category);
 
-    const image = req.files
-    const images =[]
+    const image = req.files;
+    const images = [];
     image.forEach((value) => {
       images.push(value.path);
     });
 
-    if(req.files.length > 0){
-        product.name = name;
-        product.category = category;
-        product.description = description;
-        product.rating = rating;
-        product.price = price;
-        product.isFeatured = isFeatured;
-        product.photo = images
+    if (req.files.length > 0) {
+      product.name = name;
+      product.category = category;
+      product.description = description;
+      product.rating = rating;
+      product.price = price;
+      product.isFeatured = isFeatured;
+      product.photo = images;
 
-        await product.save();
-        console.log(product);
-        // save itemsId to category
-        categories.products.addToSet({ _id: product._id });
-        categories.save(); //save category
-        res.status(200).json({
-          message: "create product",
-          data: product,
-        });
-            
-    }else{
-     
-        product.name = name;
-        product.category = category;
-        product.description = description;
-        product.rating = rating;
-        product.price = price;
-        product.isFeatured = isFeatured;
-      
+      await product.save();
+      console.log(product);
+      // save itemsId to category
+      categories.products.addToSet({ _id: product._id });
+      categories.save(); //save category
+      res.status(200).json({
+        message: "create product",
+        data: product,
+      });
+    } else {
+      product.name = name;
+      product.category = category;
+      product.description = description;
+      product.rating = rating;
+      product.price = price;
+      product.isFeatured = isFeatured;
+
       await product.save();
       // save itemsId to category
       categories.products.addToSet({ _id: product._id });
@@ -226,9 +221,9 @@ exports.updateProduct = async(req, res,next) =>{
     }
   } catch (error) {
     console.log("error", error);
-    res.status(400).send("Error",error)
+    res.status(400).send("Error", error);
   }
-}
+};
 
 exports.deleteProduct = async (req, res) => {
   try {
@@ -237,9 +232,7 @@ exports.deleteProduct = async (req, res) => {
     // let productId = ''
     // let categoryId = ''
 
-
-    const product = await Product.findByIdAndRemove(id)
-    .then(result =>{
+    const product = await Product.findByIdAndRemove(id).then((result) => {
       // get product id
       let productId = result._id;
 
@@ -253,22 +246,20 @@ exports.deleteProduct = async (req, res) => {
       });
 
       // get Category id and remove product from category
-      console.log(productId)
-      console.log(categoryId)
+      console.log(productId);
+      console.log(categoryId);
       const category = Category.findByIdAndUpdate(categoryId, {
         $pull: {
           products: productId,
         },
-      }).then(doc =>{
+      }).then((doc) => {
         return product;
-      })
+      });
 
       res.status(200).send("delete success");
-    })
-    
-
+    });
   } catch (error) {
-    res.status(400).send( error);
+    res.status(400).send(error);
   }
 };
 

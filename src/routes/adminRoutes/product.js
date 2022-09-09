@@ -3,7 +3,7 @@ const router = express.Router();
 const {
   Validation,
   checkItemValidation,
-} = require("../middleware/validation/Validator");
+} = require("../../middleware/validation/Validator");
 
 const {
   createProduct,
@@ -16,13 +16,13 @@ const {
   getProductCount,
   getProductFeatured,
   getAllProductSpesific,
-} = require("../controllers/productController");
+} = require("../../controllers/adminControllers/productController");
 
 // import middleware image
 const {
   uploadMultiple,
   uploadSingle,
-} = require("../middleware/uploadImage/uploadImage");
+} = require("../../middleware/uploadImage/uploadImage");
 const { validationResult, body } = require("express-validator");
 
 router.route("/")

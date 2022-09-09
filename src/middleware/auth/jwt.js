@@ -15,6 +15,7 @@ const authJwt = () => {
       { url: /\/api\/v1\/category(.*)/, methods: ["GET", "OPTIONS"] },
       "/api/v1/user/login",
       "/api/v1/user/register",
+      "/"
     ],
   });
 };

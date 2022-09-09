@@ -11,7 +11,7 @@ const {
   updateOrder,
   deleteOrder,
   getUserOrder,
-} = require("../controllers/orderController");
+} = require("../../controllers/adminControllers/orderController");
 
 /*Router "/" Listing */
 router.route("/")

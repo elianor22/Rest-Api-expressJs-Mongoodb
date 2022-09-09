@@ -1,4 +1,4 @@
-const User = require("../models/userModel");
+const User = require("../../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -102,6 +102,45 @@ exports.getUserCount = async (req, res) => {
   }
 }
 
+exports.updateUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { name, email, phone, street, city, country, zip } = req.body;
+    // console.log(email)
+    const user = {
+      name,
+      email,
+      phone,
+      street,
+      city,
+      country,
+      zip,
+    };
+
+    const userUpdate = await User.findByIdAndUpdate(userId, user, {
+      new: true,
+    });
+
+    if (!userUpdate) {
+      res.status.send("Error User Not Found");
+    }
+    res.status(200).json(userUpdate);
+  } catch (error) {
+    console.log("error");
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  const userId = req.params.id;
+
+  const user = await User.findByIdAndRemove(userId);
+
+  if (!user) {
+    res.status(400).send("User Not Found");
+  }
+  res.status(200).send("success delete user");
+};
+
 exports.userLogin = async (req, res) => {
   try {
     const {email,password} = req.body
@@ -126,7 +165,9 @@ exports.userLogin = async (req, res) => {
        {expiresIn:'1d'}
      );
 
+      res.cookie('jwt',token,{httpOnly:true, maxAge:1000})
       res.status(200).send({email: user.email, token: token});
+      console.log(req.cookies)
     } else {
       res.status(400).send("wrong password");
     }
@@ -170,42 +211,8 @@ exports.userRegistration = async (req, res) => {
   }
 };
 
-exports.updateUser = async (req, res) => {
-  try {
-    const userId = req.params.id
-    const { name, email, phone, street, city, country, zip } =
-      req.body;
-    // console.log(email)
-    const user = {
-      name,
-      email,
-      phone,
-      street,
-      city,
-      country,
-      zip,
-    };
-
-    const userUpdate = await User.findByIdAndUpdate(userId,user,{new:true})
-
-    if(!userUpdate){
-      res.status.send("Error User Not Found")
-    }
-    res.status(200).json(userUpdate)
-
-
-  } catch (error) {
-    console.log("error");
-  }
-};
-
-exports.deleteUser = async(req,res) =>{
-  const userId = req.params.id
-
-  const user = await User.findByIdAndRemove(userId)
-
-  if(!user){
-    res.status(400).send("User Not Found")
-  }
-  res.status(200).send("success delete user")
+exports.userLogout= async (req, res) => {
+  res.cookie('jwt','',{maxAge:1})
+  console.log(res.cookie)
 }
+

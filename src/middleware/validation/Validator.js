@@ -1,4 +1,3 @@
-const { compareSync } = require("bcrypt");
 const { check,body, validationResult } = require("express-validator");
 const Users = require("../../models/userModel")
 

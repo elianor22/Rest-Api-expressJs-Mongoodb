@@ -17,14 +17,14 @@ const errorHandler = require("./src/middleware/auth/errorHandler")
 
 // import Router
 var indexRouter = require("./src/routes/index");
-var usersRouter = require("./src/routes/users");
-const categoryRouter = require("./src/routes/category");
-const productRouter = require("./src/routes/product");
-const orderRouter = require("./src/routes/order")
+var usersRouter = require("./src/routes/adminRoutes/users");
+const categoryRouter = require("./src/routes/adminRoutes/category");
+const productRouter = require("./src/routes/adminRoutes/product");
+const orderRouter = require("./src/routes/adminRoutes/order")
 
 var app = express();
 
-// using cors
+
 
 
 dotenv.config({ path: "./config.env" });
@@ -47,7 +47,7 @@ mongoose.connect(
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
+app.set("view engine", "ejs");
 
 // middleware
 app.use(cors());
@@ -55,11 +55,12 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(authJwt())
+// app.use(authJwt())
 app.use(errorHandler)
 
 app.use(express.static(path.join(__dirname)));
 
+// Router
 app.use("/", indexRouter);
 app.use("/api/v1/user", usersRouter);
 app.use("/api/v1/category", categoryRouter);

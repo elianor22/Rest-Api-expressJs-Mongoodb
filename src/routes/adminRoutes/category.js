@@ -3,7 +3,7 @@ const router = express.Router();
 const {
   Validation,
   checkCategoryValidation,
-} = require("../middleware/validation/Validator");
+} = require("../../middleware/validation/Validator");
 // const { check, validationResult } = require("express-validator");
 
 const {
@@ -13,7 +13,7 @@ const {
   getCategoryById,
   searchCategory,
   updateCategory,
-} = require("../controllers/categoryController");
+} = require("../../controllers/adminControllers/categoryController");
 
 router
   .route("/")

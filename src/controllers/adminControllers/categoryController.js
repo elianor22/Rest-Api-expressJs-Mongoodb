@@ -1,4 +1,4 @@
-const Category = require("../models/categoryModel");
+const Category = require("../../models/categoryModel");
 
 exports.createCategory = async (req, res) => {
   try {
@@ -11,10 +11,16 @@ exports.createCategory = async (req, res) => {
     });
     let rel = await dataSave.save()
 
+     if(!rel){
+       res.status(500).json({
+         message:"error , not valid"
+       })
+     }else{
       res.status(201).json({
         message:`create succecc ${rel.name}`,
         data:rel
       });
+     }
   } catch (error) {
     console.log(error);
   }

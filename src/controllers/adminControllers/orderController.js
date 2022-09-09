@@ -1,5 +1,5 @@
-const Order = require("../models/orderModel");
-const OrderItem = require("../models/orderItemsModel");
+const Order = require("../../models/orderModel");
+const OrderItem = require("../../models/orderItemsModel");
 
 exports.createOrder = async (req, res) => {
   const { orderItems, shippingAddress, city, country, zip, phoneNumber, user } =
